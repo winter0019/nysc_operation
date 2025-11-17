@@ -42,7 +42,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <div>
             <div className="flex flex-col items-center justify-center space-y-3">
-                <img src="https://nysc.gov.ng/assets/img/logo.png" alt="NYSC Logo" className="h-24 w-24"/>
+                <img src="https://i.imgur.com/gY2842G.png" alt="NYSC Logo" className="h-24 w-24"/>
                 <div className="text-center">
                     <h2 className="text-3xl font-extrabold text-gray-900">
                         NYSC Daura Zone

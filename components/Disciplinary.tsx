@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { LGA, DisciplinaryCase } from '../types';
 import { generateQueryDraft } from '../services/geminiService';
@@ -10,6 +11,14 @@ import LetterheadDisplay from './common/LetterheadDisplay';
 import PrinterIcon from './icons/PrinterIcon';
 import ClipboardIcon from './icons/ClipboardIcon';
 import ShareIcon from './icons/ShareIcon';
+
+// Declare global variables from CDN scripts for TypeScript
+declare const html2canvas: any;
+declare global {
+    interface Window {
+        jspdf: any;
+    }
+}
 
 const MOCK_CASES: DisciplinaryCase[] = [
     { id: '1', corpMemberName: 'Adekunle Gold', offense: 'Absconded from PPA for 2 weeks', date: '2024-06-15', status: 'Queried' },
@@ -26,6 +35,7 @@ const Disciplinary: React.FC<{ lga: LGA }> = ({ lga }) => {
     const [lgiName, setLgiName] = useState('');
     const [generatedQuery, setGeneratedQuery] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
 
     const isShareSupported = navigator.share !== undefined;
@@ -54,15 +64,66 @@ const Disciplinary: React.FC<{ lga: LGA }> = ({ lga }) => {
     };
     
     const handleShare = async () => {
-        if (isShareSupported) {
-            try {
-                await navigator.share({
-                    title: `NYSC Query Letter for ${corpMemberName}`,
-                    text: generatedQuery,
-                });
-            } catch (error) {
-                console.error('Error sharing:', error);
+        if (!isShareSupported) {
+            alert('Web Share API is not supported in this browser.');
+            return;
+        }
+        
+        const letterElement = document.querySelector('.printable-area') as HTMLElement;
+        if (!letterElement) {
+            alert('Please generate a query letter first before sharing.');
+            return;
+        }
+
+        setIsSharing(true);
+        try {
+            const canvas = await html2canvas(letterElement, { scale: 2, useCORS: true });
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+
+            const PAGE_WIDTH = pdf.internal.pageSize.getWidth();
+            const PAGE_HEIGHT = pdf.internal.pageSize.getHeight();
+            const pageMargin = 10;
+            const contentWidth = PAGE_WIDTH - (pageMargin * 2);
+            
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = imgWidth / imgHeight;
+            
+            let pdfImgHeight = contentWidth / ratio;
+            let pdfImgWidth = contentWidth;
+
+            // If height is too big, scale based on height instead
+            if(pdfImgHeight > PAGE_HEIGHT - (pageMargin * 2)) {
+                pdfImgHeight = PAGE_HEIGHT - (pageMargin * 2);
+                pdfImgWidth = pdfImgHeight * ratio;
             }
+
+            const x = pageMargin + (contentWidth - pdfImgWidth) / 2;
+            const y = pageMargin;
+
+            pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, pdfImgWidth, pdfImgHeight);
+            const pdfBlob = pdf.output('blob');
+
+            const pdfFile = new File([pdfBlob], `Query_${corpMemberName.replace(/\s/g, '_')}.pdf`, {
+                type: 'application/pdf',
+            });
+
+            if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+                await navigator.share({
+                    files: [pdfFile],
+                    title: `NYSC Query Letter for ${corpMemberName}`,
+                    text: `Please find attached the query letter for ${corpMemberName}.`,
+                });
+            } else {
+                alert("This browser doesn't support sharing files.");
+            }
+        } catch (error) {
+            console.error('Error generating or sharing PDF:', error);
+            alert('An error occurred while trying to share the letter as a PDF.');
+        } finally {
+            setIsSharing(false);
         }
     };
 
@@ -140,8 +201,8 @@ const Disciplinary: React.FC<{ lga: LGA }> = ({ lga }) => {
                                     {isCopied ? 'Copied!' : 'Copy'}
                                 </Button>
                                 {isShareSupported && (
-                                    <Button variant="secondary" onClick={handleShare} icon={<ShareIcon className="h-4 w-4"/>}>
-                                        Share
+                                    <Button variant="secondary" onClick={handleShare} icon={<ShareIcon className="h-4 w-4"/>} isLoading={isSharing}>
+                                        {isSharing ? 'Preparing...' : 'Share'}
                                     </Button>
                                 )}
                             </div>
