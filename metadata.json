@@ -1,0 +1,5 @@
+{
+  "name": "NYSC Daura Zone Operations",
+  "description": "A workplace application for Zonal and Local Government Inspectors of the NYSC Daura zone to manage corps members' disposition, monthly clearance, disciplinary actions, training centers, and CDS groups.",
+  "requestFramePermissions": []
+}
