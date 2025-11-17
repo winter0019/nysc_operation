@@ -1,11 +1,11 @@
-
 {
   "name": "nysc-daura-zone-ops",
   "version": "1.0.0",
   "description": "A workplace application for Zonal and Local Government Inspectors of the NYSC Daura zone.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild index.tsx --bundle --outfile=main.js --minify --define:process.env.NODE_ENV='\"production\"' --define:process.env.API_KEY='\"$API_KEY\"'"
   },
   "keywords": [],
   "author": "",
