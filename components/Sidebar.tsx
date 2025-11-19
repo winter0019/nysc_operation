@@ -1,4 +1,3 @@
-
 import React from 'react';
 import UsersIcon from './icons/UsersIcon';
 import ClipboardCheckIcon from './icons/ClipboardCheckIcon';
@@ -58,7 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, onLogout, 
       </button>
 
       <div className={`flex items-center space-x-3 border-b pb-4 mb-4 ${!isOpen && 'justify-center'}`}>
-        <img src="https://i.imgur.com/gY2842G.png" alt="NYSC Logo" className="h-10 w-10 flex-shrink-0" />
+        <img src="https://nysc.gov.ng/assets/img/logo.png" alt="NYSC Logo" className="h-10 w-10 flex-shrink-0" />
         <div className={`overflow-hidden transition-opacity duration-200 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
           <h1 className="text-lg font-bold text-green-800 whitespace-nowrap">NYSC Portal</h1>
           <p className="text-xs text-gray-500">Daura Zone</p>

@@ -4,8 +4,8 @@
   "description": "A workplace application for Zonal and Local Government Inspectors of the NYSC Daura zone.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild index.tsx --bundle --outfile=main.js --minify --define:process.env.NODE_ENV='\"production\"' --define:process.env.API_KEY='\"$API_KEY\"'"
+    "build": "esbuild index.tsx --bundle --outfile=dist/main.js --loader:.tsx=tsx --define:process.env.NODE_ENV='\"production\"' && cp index.html dist/index.html && cp -r public/* dist/ 2>/dev/null || :",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
