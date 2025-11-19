@@ -4,18 +4,21 @@ import Dashboard from "./components/Dashboard";
 import { LGA } from "./types";
 
 // ---- Gemini API Setup ----
-import { GoogleAI } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 
 // GEMINI_API_KEY is injected by esbuild as a global constant.
 // It will be replaced at build time.
-const GEMINI_KEY: string = typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
+const GEMINI_KEY: string =
+  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
 if (!GEMINI_KEY) {
-  console.warn("⚠️ GEMINI_API_KEY is missing! Make sure it is set in Render environment variables.");
+  console.warn(
+    "⚠️ GEMINI_API_KEY is missing! Make sure it is set in Render environment variables."
+  );
 }
 
-export const geminiClient = new GoogleAI({
-  apiKey: GEMINI_KEY
+export const geminiClient = new GoogleGenAI({
+  apiKey: GEMINI_KEY,
 });
 // ---------------------------
 
