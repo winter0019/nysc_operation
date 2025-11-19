@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
-import LoginScreen from './components/LoginScreen';
-import Dashboard from './components/Dashboard';
-import { LGA } from './types';
+import React, { useState } from "react";
+import LoginScreen from "./components/LoginScreen";
+import Dashboard from "./components/Dashboard";
+import { LGA } from "./types";
 
 // ---- Gemini API Setup ----
-import { GoogleAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/genai";
 
-// GEMINI_API_KEY is injected by esbuild through --define:
-const GEMINI_KEY = GEMINI_API_KEY;
+// GEMINI_API_KEY is injected by esbuild as a global constant.
+// It will be replaced at build time.
+const GEMINI_KEY: string = typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
-export const geminiClient = new GoogleAI({
-  apiKey: GEMINI_KEY
-});
+if (!GEMINI_KEY) {
+  console.warn("⚠️ GEMINI_API_KEY is missing! Make sure it is set in Render environment variables.");
+}
+
+export const geminiClient = new GoogleGenerativeAI(GEMINI_KEY);
 // ---------------------------
 
 const App: React.FC = () => {
