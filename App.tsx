@@ -4,10 +4,14 @@ import Dashboard from './components/Dashboard';
 import { LGA } from './types';
 
 // ---- Gemini API Setup ----
-import { GoogleGenerativeAI } from "@google/genai";
-import { GEMINI_KEY } from "./index";   // Exported from index.tsx
+import { GoogleAI } from "@google/genai";
 
-export const geminiClient = new GoogleGenerativeAI(GEMINI_KEY);
+// GEMINI_API_KEY is injected by esbuild through --define:
+const GEMINI_KEY = GEMINI_API_KEY;
+
+export const geminiClient = new GoogleAI({
+  apiKey: GEMINI_KEY
+});
 // ---------------------------
 
 const App: React.FC = () => {
