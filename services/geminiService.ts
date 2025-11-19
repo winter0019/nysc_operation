@@ -1,6 +1,10 @@
+
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+// Safely access process.env.API_KEY to prevent ReferenceError if process is not defined in the browser
+const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : '';
+
+const ai = new GoogleGenAI({ apiKey });
 
 export const generateQueryDraft = async (
   offense: string,
@@ -98,7 +102,7 @@ export const generateQueryDraft = async (
     `;
     
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         contents: prompt,
     });
     

@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface LetterheadDisplayProps {
@@ -11,7 +12,7 @@ const LetterheadDisplay: React.FC<LetterheadDisplayProps> = ({ queryText }) => {
       <header className="mb-8">
         <div className="flex justify-between items-start">
           <div className="flex items-center space-x-4">
-            <img src="https://nysc.gov.ng/assets/img/logo.png" alt="NYSC Logo" className="h-24 w-24" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/NYSC_logo.svg/240px-NYSC_logo.svg.png" alt="NYSC Logo" className="h-24 w-24" />
           </div>
           <div className="text-right font-bold text-xs">
              <p>Beside Daura Emirate Council</p>
