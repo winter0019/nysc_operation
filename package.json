@@ -4,16 +4,14 @@
   "description": "A workplace application for Zonal and Local Government Inspectors of the NYSC Daura zone.",
   "main": "index.js",
   "scripts": {
-    "build": "esbuild index.tsx --bundle --outfile=dist/main.js --loader:.tsx=tsx --define:process.env.NODE_ENV='\"production\"' && cp index.html dist/index.html && cp -r public/* dist/ 2>/dev/null || :",
+    "build": "esbuild index.tsx --bundle --minify --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"${GEMINI_API_KEY}\\\" --define:process.env.NODE_ENV=\\\"production\\\" && cp index.html dist/index.html && cp -r public/* dist/ 2>/dev/null || :",
+    "start": "esbuild index.tsx --bundle --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"${GEMINI_API_KEY}\\\" --define:process.env.NODE_ENV=\\\"development\\\" --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@google/genai": "^1.29.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "esbuild": "^0.23.0"
