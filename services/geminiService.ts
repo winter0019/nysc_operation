@@ -1,10 +1,14 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 // Safely read API key (works in browser-builds via esbuild define)
-const apiKey =
-  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
+const apiKey = typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
-const ai = new GoogleGenerativeAI(apiKey);
+if (!apiKey) {
+  console.warn("⚠️ GEMINI_API_KEY is missing! Make sure it is set in environment variables.");
+}
+
+// Initialize client
+const ai = new GoogleGenAI({ apiKey });
 
 export const generateQueryDraft = async (
   offense: string,
@@ -29,12 +33,13 @@ export const generateQueryDraft = async (
 
     const prompt = `
       You are an expert and highly meticulous NYSC Local Government Inspector in ${lgaName}.
-      Your task is to draft a formal and complete query letter...
-
-      [same prompt as before]
+      Your task is to draft a formal and complete query letter for ${corpMemberName}, 
+      related to the offense: ${offense}, posted in state ${stateCode} at ${ppa}.
+      Include proper formatting, salutations, date (${currentDate}), and reference number (${randomRefNum}).
     `;
 
-    const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // Use the generative model
+    const model = ai.model("gemini-2.5-flash");
 
     const result = await model.generateContent(prompt);
 
