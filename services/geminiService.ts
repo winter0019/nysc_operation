@@ -1,12 +1,16 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Safely access process.env.API_KEY for both Node and Browser environments
+// Safely access GEMINI_API_KEY injected by esbuild at build time
 const apiKey =
-  typeof process !== "undefined" && process.env?.API_KEY
-    ? process.env.API_KEY
-    : "";
+  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
-const ai = new GoogleGenAI({ apiKey });
+if (!apiKey) {
+  console.warn(
+    "⚠️ GEMINI_API_KEY is missing! Make sure it is set in your environment."
+  );
+}
+
+const ai = new GoogleGenerativeAI({ apiKey });
 
 export const generateQueryDraft = async (
   offense: string,
@@ -19,7 +23,7 @@ export const generateQueryDraft = async (
   try {
     if (!apiKey) {
       throw new Error(
-        "API key is missing. Please set process.env.API_KEY or provide a valid key."
+        "API key is missing. Please set GEMINI_API_KEY."
       );
     }
 
@@ -37,12 +41,11 @@ export const generateQueryDraft = async (
       [ENTIRE PROMPT REMAINS EXACTLY THE SAME — unchanged]
     `;
 
-    const response = await ai.models.generate({
-      model: "gemini-2.5-flash",
-      input: prompt,
-    });
+    // Use the proper API for generating content
+    const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(prompt);
 
-    return response.text(); // IMPORTANT — use text() not text
+    return result.response.text;
   } catch (error) {
     console.error("Error generating query draft:", error);
 

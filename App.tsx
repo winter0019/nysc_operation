@@ -4,7 +4,7 @@ import Dashboard from "./components/Dashboard";
 import { LGA } from "./types";
 
 // ---- Gemini API Setup ----
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // GEMINI_API_KEY is injected by esbuild as a global constant.
 // It will be replaced at build time.
@@ -17,7 +17,7 @@ if (!GEMINI_KEY) {
   );
 }
 
-export const geminiClient = new GoogleGenAI({
+export const geminiClient = new GoogleGenerativeAI({
   apiKey: GEMINI_KEY,
 });
 // ---------------------------
