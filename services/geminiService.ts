@@ -1,18 +1,9 @@
-// services/geminiService.ts
 import { GoogleGenAI } from "@google/genai";
 
-// Safely read GEMINI_API_KEY injected by esbuild
-const GEMINI_KEY =
-  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
+// GEMINI_API_KEY injected by esbuild
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-if (!GEMINI_KEY) {
-  console.warn(
-    "⚠️ GEMINI_API_KEY is missing! Make sure it is set in your environment variables."
-  );
-}
-
-const ai = new GoogleGenAI({ apiKey: GEMINI_KEY });
-
+// Generate text
 export const generateQueryDraft = async (
   offense: string,
   corpMemberName: string,
@@ -22,33 +13,22 @@ export const generateQueryDraft = async (
   lgiName: string
 ): Promise<string> => {
   try {
-    const currentDate = new Date().toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-
-    const randomRefNum = Math.floor(Math.random() * 899) + 100;
-
     const prompt = `
-      You are an expert NYSC Local Government Inspector in ${lgaName}.
-      Draft a formal query letter for ${corpMemberName}, regarding ${offense}.
-      Include the state code (${stateCode}), PPA (${ppa}), LGI (${lgiName}), 
-      date (${currentDate}), and reference number (${randomRefNum}). 
-      Use proper salutations and formatting.
+      Draft a formal NYSC query letter for ${corpMemberName} in ${lgaName} 
+      regarding offense: ${offense}, posted at ${ppa}, ${stateCode}.
     `;
 
-    // Correct method to call the model
-    const response = await ai.generate({
-      model: "gemini-2.5-flash",
-      input: prompt,
+    const response = await ai.chat.completions.create({
+      model: "gemini-2.5-chat", // or "gemini-2.5-flash" for text
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.3
     });
 
-    return response.output_text;
+    // The text from the first message returned
+    return response.choices[0].message.content;
   } catch (error) {
     console.error("Error generating query draft:", error);
-    return error instanceof Error
-      ? `Error: ${error.message}`
-      : "Unknown error occurred";
+    if (error instanceof Error) return `AI error: ${error.message}`;
+    return "Unknown error generating draft.";
   }
 };
