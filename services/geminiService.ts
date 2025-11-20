@@ -1,14 +1,9 @@
-// services/geminiService.ts
 import { GoogleGenAI } from "@google/genai";
 
-// GEMINI_API_KEY injected by esbuild at build time
-const GEMINI_KEY: string =
-  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
+const GEMINI_KEY = typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
 if (!GEMINI_KEY) {
-  console.warn(
-    "⚠️ GEMINI_API_KEY is missing! Make sure it is set in your environment."
-  );
+  console.warn("⚠️ GEMINI_API_KEY is missing!");
 }
 
 export const geminiClient = new GoogleGenAI({ apiKey: GEMINI_KEY });
@@ -20,21 +15,18 @@ export const generateQueryDraft = async (
   ppa: string,
   lgaName: string,
   lgiName: string
-): Promise<string> => {
+) => {
   try {
-    if (!GEMINI_KEY) throw new Error("API key is missing.");
-
     const currentDate = new Date().toLocaleDateString("en-GB", {
       day: "numeric",
       month: "long",
       year: "numeric",
     });
-
     const randomRefNum = Math.floor(Math.random() * 899) + 100;
 
     const prompt = `
       You are an expert NYSC Local Government Inspector in ${lgaName}.
-      Draft a formal query letter for ${corpMemberName}, regarding the offense: ${offense}.
+      Draft a formal query letter for ${corpMemberName}, regarding ${offense}.
       Include date (${currentDate}), reference number (${randomRefNum}), salutations, and proper formatting.
     `;
 
@@ -43,11 +35,9 @@ export const generateQueryDraft = async (
       input: prompt,
     });
 
-    return response.text(); // .text() gives the AI response string
+    return response.output_text;
   } catch (error) {
     console.error("Error generating query draft:", error);
-    return error instanceof Error
-      ? `Error: ${error.message}`
-      : "An unknown error occurred.";
+    return error instanceof Error ? `Error: ${error.message}` : "Unknown error";
   }
 };
