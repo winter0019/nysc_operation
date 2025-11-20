@@ -1,9 +1,17 @@
-import { GoogleGenAI } from "@google/genai";
+// services/geminiService.ts
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// GEMINI_API_KEY injected by esbuild
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+// GEMINI_API_KEY injected at build time
+const GEMINI_KEY: string =
+  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
-// Generate text
+if (!GEMINI_KEY) {
+  console.warn("⚠️ GEMINI_API_KEY is missing! Set it in environment variables.");
+}
+
+// Initialize client
+const ai = new GoogleGenerativeAI({ apiKey: GEMINI_KEY });
+
 export const generateQueryDraft = async (
   offense: string,
   corpMemberName: string,
@@ -19,12 +27,11 @@ export const generateQueryDraft = async (
     `;
 
     const response = await ai.chat.completions.create({
-      model: "gemini-2.5-chat", // or "gemini-2.5-flash" for text
+      model: "gemini-2.5-chat",
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.3
+      temperature: 0.3,
     });
 
-    // The text from the first message returned
     return response.choices[0].message.content;
   } catch (error) {
     console.error("Error generating query draft:", error);
