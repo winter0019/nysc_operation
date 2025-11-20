@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import LoginScreen from "./components/LoginScreen";
 import Dashboard from "./components/Dashboard";
@@ -21,6 +22,12 @@ export const geminiClient = new GoogleGenerativeAI({
   apiKey: GEMINI_KEY,
 });
 // ---------------------------
+=======
+import React, { useState } from 'react';
+import LoginScreen from './components/LoginScreen';
+import Dashboard from './components/Dashboard';
+import { LGA } from './types';
+>>>>>>> f9e64866bf0756201ceb012d07f29530f2296ed7
 
 const App: React.FC = () => {
   const [loggedInLGA, setLoggedInLGA] = useState<LGA | null>(null);
