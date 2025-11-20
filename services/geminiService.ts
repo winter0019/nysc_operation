@@ -1,16 +1,12 @@
-// services/geminiService.ts
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-// GEMINI_API_KEY injected at build time
-const GEMINI_KEY: string =
-  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
+const apiKey = process.env.GEMINI_API_KEY;
 
-if (!GEMINI_KEY) {
-  console.warn("⚠️ GEMINI_API_KEY is missing! Set it in environment variables.");
+if (!apiKey) {
+  console.warn("⚠️ GEMINI_API_KEY missing. Set it in environment variables!");
 }
 
-// Initialize client
-const ai = new GoogleGenerativeAI({ apiKey: GEMINI_KEY });
+const ai = new GoogleGenAI({ apiKey });
 
 export const generateQueryDraft = async (
   offense: string,
@@ -21,21 +17,29 @@ export const generateQueryDraft = async (
   lgiName: string
 ): Promise<string> => {
   try {
-    const prompt = `
-      Draft a formal NYSC query letter for ${corpMemberName} in ${lgaName} 
-      regarding offense: ${offense}, posted at ${ppa}, ${stateCode}.
-    `;
-
-    const response = await ai.chat.completions.create({
-      model: "gemini-2.5-chat",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.3,
+    const currentDate = new Date().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
 
-    return response.choices[0].message.content;
-  } catch (error) {
-    console.error("Error generating query draft:", error);
-    if (error instanceof Error) return `AI error: ${error.message}`;
-    return "Unknown error generating draft.";
+    const randomRefNum = Math.floor(Math.random() * 899) + 100;
+
+    const prompt = `
+      You are an expert NYSC Local Government Inspector in ${lgaName}.
+      Draft a formal query letter for ${corpMemberName}, offense: ${offense},
+      posted in state ${stateCode} at ${ppa}.
+      Include proper formatting, salutations, date (${currentDate}), reference (${randomRefNum}).
+    `;
+
+    const response = await ai.models.generate({
+      model: "gemini-2.5-flash",
+      input: prompt,
+    });
+
+    return response.output[0].content[0].text || "";
+  } catch (err) {
+    console.error(err);
+    throw new Error("AI generation failed");
   }
 };
