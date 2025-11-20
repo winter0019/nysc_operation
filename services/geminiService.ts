@@ -1,16 +1,17 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+// services/geminiService.ts
+import { GoogleGenAI } from "@google/genai";
 
-// Safely access GEMINI_API_KEY injected by esbuild at build time
-const apiKey = typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
+// GEMINI_API_KEY injected by esbuild at build time
+const GEMINI_KEY: string =
+  typeof GEMINI_API_KEY !== "undefined" ? GEMINI_API_KEY : "";
 
-if (!apiKey) {
+if (!GEMINI_KEY) {
   console.warn(
     "⚠️ GEMINI_API_KEY is missing! Make sure it is set in your environment."
   );
 }
 
-// Initialize the Google Generative AI client
-const ai = new GoogleGenerativeAI({ apiKey });
+export const geminiClient = new GoogleGenAI({ apiKey: GEMINI_KEY });
 
 export const generateQueryDraft = async (
   offense: string,
@@ -21,9 +22,7 @@ export const generateQueryDraft = async (
   lgiName: string
 ): Promise<string> => {
   try {
-    if (!apiKey) {
-      throw new Error("API key is missing. Please set GEMINI_API_KEY.");
-    }
+    if (!GEMINI_KEY) throw new Error("API key is missing.");
 
     const currentDate = new Date().toLocaleDateString("en-GB", {
       day: "numeric",
@@ -34,24 +33,21 @@ export const generateQueryDraft = async (
     const randomRefNum = Math.floor(Math.random() * 899) + 100;
 
     const prompt = `
-      You are an expert and highly meticulous NYSC Local Government Inspector in ${lgaName}.
-      Your task is to draft a formal and complete query letter for ${corpMemberName}, 
-      related to the offense: ${offense}, posted in state ${stateCode} at ${ppa}.
-      Include proper formatting, salutations, date (${currentDate}), and reference number (${randomRefNum}).
+      You are an expert NYSC Local Government Inspector in ${lgaName}.
+      Draft a formal query letter for ${corpMemberName}, regarding the offense: ${offense}.
+      Include date (${currentDate}), reference number (${randomRefNum}), salutations, and proper formatting.
     `;
 
-    // Use the proper generative model
-    const model = ai.model("gemini-2.5-flash");
-    const result = await model.generateContent(prompt);
+    const response = await geminiClient.models.generate({
+      model: "gemini-2.5-flash",
+      input: prompt,
+    });
 
-    return result.response.text();
+    return response.text(); // .text() gives the AI response string
   } catch (error) {
     console.error("Error generating query draft:", error);
-
-    if (error instanceof Error) {
-      return `An error occurred while communicating with the AI service: ${error.message}. Please check your connection and API key.`;
-    }
-
-    return "An unknown error occurred.";
+    return error instanceof Error
+      ? `Error: ${error.message}`
+      : "An unknown error occurred.";
   }
 };
