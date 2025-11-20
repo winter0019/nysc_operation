@@ -5,26 +5,16 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-<<<<<<< HEAD
     "dev": "node serve.js",
     "build": "esbuild index.tsx --bundle --minify --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"$GEMINI_API_KEY\\\" --define:process.env.NODE_ENV=\\\"production\\\" && cpx index.html dist/ && cpx \"public/**/*\" dist/public/",
-=======
-    "build": "esbuild index.tsx --bundle --minify --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"${GEMINI_API_KEY}\\\" --define:process.env.NODE_ENV=\\\"production\\\" && cp index.html dist/index.html && cp -r public/* dist/ 2>/dev/null || :",
-    "start": "esbuild index.tsx --bundle --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"${GEMINI_API_KEY}\\\" --define:process.env.NODE_ENV=\\\"development\\\" --watch",
->>>>>>> f9e64866bf0756201ceb012d07f29530f2296ed7
+    "start": "esbuild index.tsx --bundle --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"$GEMINI_API_KEY\\\" --define:process.env.NODE_ENV=\\\"development\\\" --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@google/generative-ai": "^0.24.1",
+    "@google/genai": "^1.29.1",
     "express": "^5.1.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
-=======
-    "@google/genai": "^1.29.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
->>>>>>> f9e64866bf0756201ceb012d07f29530f2296ed7
   },
   "devDependencies": {
     "@web/dev-server": "^0.4.6",
