@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Safely access process.env.API_KEY for both Node and Browser environments
 const apiKey =
@@ -6,7 +6,14 @@ const apiKey =
     ? process.env.API_KEY
     : "";
 
-const ai = new GoogleGenAI({ apiKey });
+if (!apiKey) {
+  console.warn(
+    "⚠️ API KEY is missing! Make sure API_KEY is set in Render environment variables."
+  );
+}
+
+// Create Gemini client
+const ai = new GoogleGenerativeAI(apiKey);
 
 export const generateQueryDraft = async (
   offense: string,
@@ -33,23 +40,21 @@ export const generateQueryDraft = async (
 
     const prompt = `
       You are an expert and highly meticulous NYSC Local Government Inspector in ${lgaName}. Your task is to draft a formal and complete query letter...
-
       [ENTIRE PROMPT REMAINS EXACTLY THE SAME — unchanged]
     `;
 
-    const response = await ai.models.generate({
-      model: "gemini-2.5-flash",
-      input: prompt,
-    });
+    // ---- Correct Model Call for the new SDK ----
+    const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    return response.text(); // IMPORTANT — use text() not text
-  } catch (error) {
+    const result = await model.generateContent(prompt);
+
+    // Correct way to access text output
+    return result.response.text();
+  } catch (error: any) {
     console.error("Error generating query draft:", error);
 
-    if (error instanceof Error) {
-      return `An error occurred while communicating with the AI service: ${error.message}. Please check your connection and API key.`;
-    }
-
-    return "An unknown error occurred.";
+    return `An error occurred while communicating with the AI service: ${
+      error?.message || error
+    }. Please check your connection and API key.`;
   }
 };
