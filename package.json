@@ -1,27 +1,21 @@
 {
   "name": "nysc-daura-zone-ops",
   "version": "1.0.0",
-  "type": "module",
-  "main": "server.js",
+  "description": "A workplace application for Zonal and Local Government Inspectors of the NYSC Daura zone.",
+  "main": "index.js",
   "scripts": {
-    "dev": "node server.js",
-    "build": "npm run build:react && npm run build:copy",
-    "build:react": "esbuild src/index.tsx --bundle --minify --outfile=dist/main.js --loader:.ts=ts --loader:.tsx=tsx --define:GEMINI_API_KEY=\\\"$GEMINI_API_KEY\\\" --define:process.env.NODE_ENV=\\\"production\\\" --external:@google/generative-ai",
-    "build:copy": "cpx \"public/**/*\" dist/",
-    "start": "node server.js"
+    "build": "esbuild index.tsx --bundle --outfile=dist/main.js --loader:.tsx=tsx --define:process.env.NODE_ENV='\"production\"' && cp index.html dist/index.html && cp -r public/* dist/ 2>/dev/null || :",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@google/genai": "^1.29.1",
-    "express": "^5.1.0",
-    "cors": "^2.8.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "esbuild": "^0.23.0",
-    "cpx": "^1.5.0",
-    "tailwindcss": "^3.4.14",
-    "autoprefixer": "^10.4.22",
-    "postcss": "^8.5.6"
+    "esbuild": "^0.23.0"
   }
 }
